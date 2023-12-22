@@ -1,13 +1,13 @@
 FROM python:3.11.7
 
-WORKDIR /app
+WORKDIR /code
 
-COPY . /app
+COPY ./requirements.txt /code/requirements.txt
 
 RUN pip install -r requirements.txt
 
 RUN pip install fastapi uvicorn
 
-COPY ./requirements.txt /app/requirements.txt
+COPY . /code
 
-CMD [ "uvicorn", "--host", "0.0.0.0", "--port", "8000", "main:app" ]
+CMD [ "uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.main:app" ]
