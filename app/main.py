@@ -1,14 +1,23 @@
 import router.notes as notes
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.templating import Jinja2Templates
+
+from database.models import Notes
+from database import db_dependency
 
 app = FastAPI()
 app.include_router(notes.router)
 
+templates = Jinja2Templates(directory="./templates")
 
 @app.get("/")
-def read_root():
-    return {"🔥 Welcome to my Note Talking Application Made With FastAPI"}
+def read_root(request : Request, db : db_dependency):
+
+    all_notes = db.query(Notes).all()
+
+    
+    return templates.TemplateResponse("index.html", {"request" : request, "name" : "Antonio T", "notes" : all_notes})
 
 # Endpoint /note | Method: POST 
 # Create a new note in the 'notes' database 

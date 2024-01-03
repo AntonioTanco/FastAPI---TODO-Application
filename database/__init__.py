@@ -1,7 +1,8 @@
 
 from fastapi import Depends
 from typing import Annotated
-from .database import Base, engine, SessionLocal
+from .database import engine, SessionLocal
+from .models import Base
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import exists, update, values, select
 

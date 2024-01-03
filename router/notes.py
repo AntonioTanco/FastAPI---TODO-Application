@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from database import db_dependency, exists, update, values
 from database.models import Notes
+from crud.crud import update_note, update_note_status
 from schema.schemas import CreateNoteSchema, CreateNoteResponseSchema, UpdateNoteSchema, UpdateNoteStatusSchema, UpdateNoteStatusResponseSchema
 
 router = APIRouter()
@@ -59,6 +60,7 @@ async def create_note(request : CreateNoteSchema, db : db_dependency) -> CreateN
 @router.put("/notes/{id}", tags=["notes"])
 async def update_notes(request : UpdateNoteSchema, id : int, db : db_dependency):
 
+    #Checks if note exist
     requested_note_id = exists().where(Notes.id == id)
 
     doesNoteExist = db.query(requested_note_id).scalar()
@@ -70,20 +72,12 @@ async def update_notes(request : UpdateNoteSchema, id : int, db : db_dependency)
         raise HTTPException(status_code=404, detail="The Note.id you provided is not found.")
     
     elif doesNoteExist:
-
-        # try:
-
-            _update_on_requested_note = db.query(Notes).filter(Notes.id == id)\
-            .update(values={Notes.note_title : request.note_title, 
-                            Notes.note_status : request.note_status, 
-                            Notes.note_contents : request.note_contents})
             
-            db.commit()
+            #updates requested note
+            update_note(request, id, db)
 
+            #queries the DB for the updated note
             updated_note = db.query(Notes).filter(Notes.id == id).first()
-
-        # except:
-        #     raise HTTPException(status_code=500, detail="The server can't process your request at this time.")
     
     return updated_note
 
@@ -100,11 +94,10 @@ async def update_note_status_by_id(request : UpdateNoteStatusSchema, id : int, d
     
     elif doesNoteExist:
 
-        _update_on_requested_note_status = db.query(Notes).filter(Notes.id == id)\
-            .update(values={Notes.note_status : request.note_status})
-        
-        db.commit()
+        #updates requested note status
+        update_note_status(request, id, db)
 
+        #queries the updated note
         updated_note_status = db.query(Notes).filter(Notes.id == id).first()
 
     return {f"Successfully Changed the status of Note: {id} to {request.note_status}"}, updated_note_status

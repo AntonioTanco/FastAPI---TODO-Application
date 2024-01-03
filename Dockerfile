@@ -10,4 +10,6 @@ RUN pip install fastapi uvicorn
 
 COPY . /code
 
-CMD [ "uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.main:app" ]
+#CMD [ "uvicorn", "--host", "0.0.0.0", "--port", "8000", "app.main:app" ]
+
+ENTRYPOINT [ "/code/bin/entrypoint.sh" ]

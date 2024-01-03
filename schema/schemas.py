@@ -56,3 +56,12 @@ class UpdateNoteStatusSchema(BaseModel):
 
 class UpdateNoteStatusResponseSchema(BaseModel):
     note_status : NoteEnum = Field(examples=["New", "WiP", "On Hold", "Completed"])
+
+class CreateUserSchema(BaseModel):
+    username : str = Field(min_length=8, nullable=False, unique=True)
+    email_address : str = Field(min_length=6, nullable=False)
+    pwd : str = Field(min_length=8)
+
+class CreateUserResponseSchema(BaseModel):
+    username : str = Field(min_length=8, nullable=False, unique=True)
+    email_address : str = Field(min_length=6, nullable=False)
